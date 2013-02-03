@@ -3,14 +3,48 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <title>TypeScript HTML App</title>
+    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.2.0/jquery.mobile-1.2.0.min.css"/>
     <link rel="stylesheet" href="app.css" type="text/css" />
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"></script>
-        <script src="app.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <script src="app.js"></script>
 </head>
-<body>
-    <h1>TypeScript HTML App</h1>
-
-    <div id="content"></div>
+<body class="ui-mobile-viewport ui-overlay-c">
+    <!-- Home -->
+    <div data-role="page" id="overview" data-url="overview" tabindex="0" class="ui-page ui-body-c ui-page-active" style="min-height: 468px; ">
+        <div data-theme="a" data-role="header" class="ui-header ui-bar-a" role="banner">
+            <h3 class="ui-title" role="heading" aria-level="1">
+                DR for Windows Phone
+            </h3>
+        </div>
+        <div data-role="content" class="ui-content" role="main">
+            <ul id="overviewList" data-role="listview" data-divider-theme="a" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">
+                <li data-theme="c" data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-corner-bottom ui-li-last ui-btn-up-c"><div class="ui-btn-inner ui-li"><div class="ui-btn-text">
+                    <a href="#programs" data-transition="slide" class="ui-link-inherit">
+                        Button
+                        <span class="ui-li-count">
+                            2
+                        </span>
+                    </a>
+                </div><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></div></li>
+            </ul>
+        </div>
+        <div id="content"></div>
+    </div>
+    
+    <div data-role="page" id="programs" data-url="programs" tabindex="0" class="ui-page ui-body-c" style="min-height: 468px; ">
+        <div data-role="header" class="ui-header ui-bar-a" role="banner">
+	    	<h1 class="ui-title" role="heading" aria-level="1">Two</h1>
+    	</div>
+        <div data-role="content" class="ui-content" role="main">
+            <ul id="programsList" data-role="listview" data-divider-theme="a" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">
+            </ul>
+        </div>
+    </div>
+    <div class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon ui-icon-loading"></span><h1>loading</h1></div>
 </body>
 </html>
