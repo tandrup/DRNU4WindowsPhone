@@ -22,14 +22,13 @@ var DRModel = (function () {
     };
     DRModel.prototype.showLabels = function (labels) {
         var _this = this;
-        $("#overviewList").remove("li");
+        $("#overviewList li").remove();
         $.each(labels, function (key, value) {
             var li = $('<li/>');
             li.append($('<a/>', {
                 "data-transition": "slide",
                 text: key,
                 click: function (e) {
-                    _this.selectedLabel = key;
                     _this.showSeries(key);
                     $.mobile.changePage('#programs');
                 }
@@ -39,6 +38,7 @@ var DRModel = (function () {
         $("#overviewList").listview('refresh');
     };
     DRModel.prototype.showSeries = function (label) {
+        var _this = this;
         var series = [];
         if(label) {
             $.each(this.series, function (i, serie) {
@@ -48,6 +48,7 @@ var DRModel = (function () {
                     }
                 });
             });
+            $("#programsTitle").html(label);
         } else {
             series = this.series;
         }
@@ -58,17 +59,50 @@ var DRModel = (function () {
                 "data-transition": "slide",
                 text: serie.title,
                 click: function (e) {
+                    _this.retrieveVideos(serie.slug);
                     $.mobile.changePage('#videos');
+                    $.mobile.loading('show');
                 }
             }));
             li.appendTo("#programsList");
         });
-        //$("#programsList").listview('refresh');
-            };
-    DRModel.prototype.retrieveVideos = function () {
-        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/max/videos&callback=?', this.handleVideos);
     };
-    DRModel.prototype.handleVideos = function (result) {
+    DRModel.prototype.retrieveVideos = function (slug) {
+        var _this = this;
+        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/' + slug + '/videos&callback=?', function (result) {
+            return _this.handleVideos(result.contents);
+        });
+    };
+    DRModel.prototype.handleVideos = function (videos) {
+        var _this = this;
+        $("#videosList li").remove();
+        $.each(videos, function (index, video) {
+            var li = $('<li/>');
+            li.append($('<a/>', {
+                "data-transition": "slide",
+                text: video.title,
+                click: function (e) {
+                    _this.showVideo(video);
+                }
+            }));
+            li.appendTo("#videosList");
+        });
+        $("#videosList").listview('refresh');
+        $.mobile.loading('hide');
+    };
+    DRModel.prototype.showVideo = function (video) {
+        $.getJSON('http://anyorigin.com/get?url=' + encodeURIComponent(video.videoManifestUrl) + '&callback=?', function (media) {
+            var mediaUrl = media.contents.replace("rtmp://vod.dr.dk/cms/mp4:", "http://vodfiles.dr.dk/");
+            mediaUrl = mediaUrl.substring(0, mediaUrl.indexOf("?ID="));
+            //this.element.appendChild(document.createElement("br"));
+            var videoHtml = document.createElement('video');
+            $("#videos .ui-content").append(videoHtml);
+            videoHtml.setAttribute("src", mediaUrl);
+            videoHtml.setAttribute("poster", "http://www.dr.dk/NU/api/videos/" + video.id + "/images/400x300.jpg");
+            videoHtml.setAttribute("width", "100%");
+            videoHtml.setAttribute("controls");
+            videoHtml.setAttribute("autoplay");
+        });
     };
     return DRModel;
 })();

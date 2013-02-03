@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
-    <Content Include="default.htm" />
+    <Content Include="index.htm" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>
     </Content>
@@ -34,7 +34,9 @@
     <Content Include="jquery.d.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="jquerymobile.d.ts" />
     <Content Include="web.config" />
+    <None Include="Gigahost.pubxml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
