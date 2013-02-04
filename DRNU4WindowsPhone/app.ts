@@ -175,6 +175,7 @@ class DRModel {
             var mediaUrl = media.contents.replace("rtmp://vod.dr.dk/cms/mp4:", "http://vodfiles.dr.dk/");
             mediaUrl = mediaUrl.substring(0, mediaUrl.indexOf("?ID="));
             //this.element.appendChild(document.createElement("br"));
+            $("#videosList video").remove();
             var videoHtml = document.createElement('video');
             $("#videos .ui-content").append(videoHtml);
             videoHtml.setAttribute("src", mediaUrl);
@@ -182,6 +183,7 @@ class DRModel {
             videoHtml.setAttribute("width", "100%");
             videoHtml.setAttribute("controls");
             videoHtml.setAttribute("autoplay");
+            $('html, body').scrollTop($("#videos video").offset().top);
         });
     }
 }

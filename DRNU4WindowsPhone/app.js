@@ -114,6 +114,7 @@ var DRModel = (function () {
         $.getJSON('http://anyorigin.com/get?url=' + encodeURIComponent(video.videoManifestUrl) + '&callback=?', function (media) {
             var mediaUrl = media.contents.replace("rtmp://vod.dr.dk/cms/mp4:", "http://vodfiles.dr.dk/");
             mediaUrl = mediaUrl.substring(0, mediaUrl.indexOf("?ID="));
+            $("#videosList video").remove();
             var videoHtml = document.createElement('video');
             $("#videos .ui-content").append(videoHtml);
             videoHtml.setAttribute("src", mediaUrl);
@@ -121,6 +122,7 @@ var DRModel = (function () {
             videoHtml.setAttribute("width", "100%");
             videoHtml.setAttribute("controls");
             videoHtml.setAttribute("autoplay");
+            $('html, body').scrollTop($("#videos video").offset().top);
         });
     };
     return DRModel;
