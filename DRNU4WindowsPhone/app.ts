@@ -79,6 +79,18 @@ class DRModel {
 
     private showLabels(labels) {
         $("#overviewList li").remove();
+
+        var li = $('<li/>');
+        li.append($('<a/>', {
+            "data-transition": "slide",
+            text: "alle",
+            click: (e) => {
+                this.showSeries(null);
+                $.mobile.changePage('#programs');
+            }
+        }));
+        li.appendTo("#overviewList");
+
         $.each(labels, (key: string, value) => {
             var li = $('<li/>');
             li.append($('<a/>', {
@@ -108,16 +120,21 @@ class DRModel {
             $("#programsTitle").html(label);
         } else {
             series = this.series;
+            $("#programsTitle").html("Alle");
         }
 
         $("#programsList li").remove();
         $.each(series, (index, serie: DRProgramSerie) => {
             var li = $('<li/>');
+            var text = serie.title;
+            if (label) {
+                text = '<img src="http://www.dr.dk/NU/api/programseries/' + serie.slug + '/images/80x80.jpg" class="ui-li-thumb"><h3 class="ui-li-heading">' + serie.title + '</h3><p class="ul-li-desc">' + serie.description + '</p>';
+            }
             li.append($('<a/>', {
                 "data-transition": "slide",
-                text: serie.title,
+                html: text,
                 click: (e) => {
-                    this.retrieveVideos(serie.slug);
+                    this.retrieveVideos(serie);
                     $.mobile.changePage('#videos');
                     $.mobile.loading('show');
                 }
@@ -126,17 +143,22 @@ class DRModel {
         });
     }
 
-    retrieveVideos(slug: string) {
-        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/' + slug + '/videos&callback=?', (result: DRVideoResult) => this.handleVideos(result.contents));
+    retrieveVideos(serie: DRProgramSerie) {
+        $("#videosTitle").html(serie.title);
+        $("#videosList li").remove();
+        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/' + serie.slug + '/videos&callback=?', (result: DRVideoResult) => this.handleVideos(serie, result.contents));
     }
 
-    private handleVideos(videos: DRVideo[]) {
-        $("#videosList li").remove();
+    private handleVideos(serie: DRProgramSerie, videos: DRVideo[]) {
         $.each(videos, (index, video: DRVideo) => {
             var li = $('<li/>');
+            var title = video.title;
+            if (title.trim().toLowerCase() == serie.title.trim().toLowerCase() && video.formattedBroadcastTime != null && video.formattedBroadcastTime.trim().length > 0) {
+                title = video.formattedBroadcastTime;
+            }
             li.append($('<a/>', {
                 "data-transition": "slide",
-                text: video.title,
+                html: '<img src="http://www.dr.dk/NU/api/videos/' + video.id + '/images/80x80.jpg" class="ui-li-thumb"><h3 class="ui-li-heading">' + title + '</h3><p class="ul-li-desc">' + video.description + '</p>',
                 click: (e) => {
                     this.showVideo(video);
                 }

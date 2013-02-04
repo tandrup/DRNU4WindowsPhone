@@ -23,6 +23,16 @@ var DRModel = (function () {
     DRModel.prototype.showLabels = function (labels) {
         var _this = this;
         $("#overviewList li").remove();
+        var li = $('<li/>');
+        li.append($('<a/>', {
+            "data-transition": "slide",
+            text: "alle",
+            click: function (e) {
+                _this.showSeries(null);
+                $.mobile.changePage('#programs');
+            }
+        }));
+        li.appendTo("#overviewList");
         $.each(labels, function (key, value) {
             var li = $('<li/>');
             li.append($('<a/>', {
@@ -51,15 +61,20 @@ var DRModel = (function () {
             $("#programsTitle").html(label);
         } else {
             series = this.series;
+            $("#programsTitle").html("Alle");
         }
         $("#programsList li").remove();
         $.each(series, function (index, serie) {
             var li = $('<li/>');
+            var text = serie.title;
+            if(label) {
+                text = '<img src="http://www.dr.dk/NU/api/programseries/' + serie.slug + '/images/80x80.jpg" class="ui-li-thumb"><h3 class="ui-li-heading">' + serie.title + '</h3><p class="ul-li-desc">' + serie.description + '</p>';
+            }
             li.append($('<a/>', {
                 "data-transition": "slide",
-                text: serie.title,
+                html: text,
                 click: function (e) {
-                    _this.retrieveVideos(serie.slug);
+                    _this.retrieveVideos(serie);
                     $.mobile.changePage('#videos');
                     $.mobile.loading('show');
                 }
@@ -67,20 +82,25 @@ var DRModel = (function () {
             li.appendTo("#programsList");
         });
     };
-    DRModel.prototype.retrieveVideos = function (slug) {
+    DRModel.prototype.retrieveVideos = function (serie) {
         var _this = this;
-        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/' + slug + '/videos&callback=?', function (result) {
-            return _this.handleVideos(result.contents);
+        $("#videosTitle").html(serie.title);
+        $("#videosList li").remove();
+        $.getJSON('http://anyorigin.com/get?url=http%3A//www.dr.dk/NU/api/programseries/' + serie.slug + '/videos&callback=?', function (result) {
+            return _this.handleVideos(serie, result.contents);
         });
     };
-    DRModel.prototype.handleVideos = function (videos) {
+    DRModel.prototype.handleVideos = function (serie, videos) {
         var _this = this;
-        $("#videosList li").remove();
         $.each(videos, function (index, video) {
             var li = $('<li/>');
+            var title = video.title;
+            if(title.trim().toLowerCase() == serie.title.trim().toLowerCase() && video.formattedBroadcastTime != null && video.formattedBroadcastTime.trim().length > 0) {
+                title = video.formattedBroadcastTime;
+            }
             li.append($('<a/>', {
                 "data-transition": "slide",
-                text: video.title,
+                html: '<img src="http://www.dr.dk/NU/api/videos/' + video.id + '/images/80x80.jpg" class="ui-li-thumb"><h3 class="ui-li-heading">' + title + '</h3><p class="ul-li-desc">' + video.description + '</p>',
                 click: function (e) {
                     _this.showVideo(video);
                 }
@@ -94,7 +114,6 @@ var DRModel = (function () {
         $.getJSON('http://anyorigin.com/get?url=' + encodeURIComponent(video.videoManifestUrl) + '&callback=?', function (media) {
             var mediaUrl = media.contents.replace("rtmp://vod.dr.dk/cms/mp4:", "http://vodfiles.dr.dk/");
             mediaUrl = mediaUrl.substring(0, mediaUrl.indexOf("?ID="));
-            //this.element.appendChild(document.createElement("br"));
             var videoHtml = document.createElement('video');
             $("#videos .ui-content").append(videoHtml);
             videoHtml.setAttribute("src", mediaUrl);
@@ -132,12 +151,10 @@ var Greeter = (function () {
         });
     };
     Greeter.prototype.stop = function () {
-        //clearTimeout(this.timerToken);
-            };
+    };
     return Greeter;
 })();
 var model = new DRModel();
 window.onload = function () {
     model.retrieveOverview();
 };
-//@ sourceMappingURL=app.js.map
